@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Press Start 2P', cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 像素邊框效果 */
+.pixel-border {
+  box-shadow:
+    0 0 0 4px #000,
+    0 0 0 8px #fff,
+    0 0 0 12px #000;
+}
+
+/* 磚塊背景圖案 */
+.brick-pattern {
+  background-color: #8B4513;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 15px,
+      rgba(0,0,0,0.3) 15px,
+      rgba(0,0,0,0.3) 16px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 30px,
+      rgba(0,0,0,0.3) 30px,
+      rgba(0,0,0,0.3) 31px
+    );
+}
+
+/* 問號磚塊效果 */
+.question-block {
+  background: linear-gradient(135deg, #FBD000 0%, #FFA500 100%);
+  position: relative;
+}
+
+.question-block::before {
+  content: '?';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: white;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+}
