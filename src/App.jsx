@@ -146,7 +146,7 @@ function App() {
               style={{ textShadow: '4px 4px 0 #000' }}>
             MARIO
           </h1>
-          <h2 className="text-2xl md:text-3xl font-pixel text-white mb-2"
+          <h2 className="text-3xl md:text-4xl font-chinese-cute text-white mb-2"
               style={{ textShadow: '3px 3px 0 #000' }}>
             動作淘汰賽
           </h2>
@@ -184,10 +184,10 @@ function App() {
                   />
                   <div className="text-center">
                     <Upload className="w-16 h-16 mx-auto mb-4 text-white" />
-                    <p className="font-pixel text-xs md:text-sm text-white">
+                    <p className="font-chinese-cute text-lg md:text-xl text-white">
                       上傳 3-5 張照片
                     </p>
-                    <p className="font-pixel text-xs text-white mt-2 opacity-80">
+                    <p className="font-chinese-cute text-sm md:text-base text-white mt-2 opacity-90">
                       或使用預設圖片
                     </p>
                   </div>
@@ -258,7 +258,7 @@ function App() {
                          style={{ textShadow: '2px 2px 0 #000' }}>
                         {previewIndex + 1} / {displayImages.length}
                       </p>
-                      <p className="font-pixel text-xs text-yellow-300 mt-1">
+                      <p className="font-chinese-cute text-base md:text-lg text-yellow-300 mt-1">
                         動作說明
                       </p>
                     </div>
@@ -319,7 +319,7 @@ function App() {
                        style={{ textShadow: '3px 3px 0 #000' }}>
                       OUT!
                     </p>
-                    <p className="font-pixel text-xs md:text-sm text-yellow-300">
+                    <p className="font-chinese-cute text-lg md:text-2xl text-yellow-300">
                       這個動作的人淘汰！
                     </p>
                   </motion.div>
@@ -334,7 +334,7 @@ function App() {
                   className="text-center"
                 >
                   <div className="question-block w-32 h-32 mx-auto border-8 border-black rounded-2xl mb-4 animate-bounce-slow" />
-                  <p className="font-pixel text-sm text-gray-500">
+                  <p className="font-chinese-cute text-xl md:text-2xl text-gray-600">
                     準備開始遊戲
                   </p>
                 </motion.div>
@@ -350,8 +350,8 @@ function App() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={exitPreview}
-              className="bg-mario-red text-white font-pixel px-8 py-4 rounded-xl border-4 border-black
-                       shadow-lg hover:bg-red-600 flex items-center gap-3 text-sm md:text-base"
+              className="bg-mario-red text-white font-chinese-cute px-8 py-4 rounded-xl border-4 border-black
+                       shadow-lg hover:bg-red-600 flex items-center gap-3 text-base md:text-xl"
             >
               <Play className="w-6 h-6" />
               完成預覽，開始遊戲
@@ -392,8 +392,8 @@ function App() {
           transition={{ delay: 1 }}
           className="max-w-2xl mx-auto mt-12 bg-white border-4 border-black rounded-xl p-6"
         >
-          <h3 className="font-pixel text-sm mb-4 text-center text-mario-red">遊戲規則</h3>
-          <ol className="font-pixel text-xs space-y-2 text-gray-700">
+          <h3 className="font-chinese-cute text-2xl mb-6 text-center text-mario-red">遊戲規則</h3>
+          <ol className="font-chinese-cute text-base md:text-lg space-y-3 text-gray-700 leading-relaxed">
             <li>1. 上傳 3-5 張瑪利歐動作照片</li>
             <li>2. 預覽並向玩家說明每個動作</li>
             <li>3. 點擊左右箭頭切換動作照片</li>

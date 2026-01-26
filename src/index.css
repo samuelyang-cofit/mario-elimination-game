@@ -10,6 +10,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* 可愛圓潤的中文字體 */
+.font-chinese-cute {
+  font-family: 'Nunito', 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 /* 像素邊框效果 */
 .pixel-border {
   box-shadow:
