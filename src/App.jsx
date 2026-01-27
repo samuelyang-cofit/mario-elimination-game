@@ -14,11 +14,11 @@ function App() {
   const audioRef = useRef(null)
   const resultAudioRef = useRef(null)
 
-  // 預設的瑪利歐動作圖片（使用 placeholder）
+  // 預設的瑪利歐動作圖片（使用點陣圖元素）
   const defaultImages = [
-    'https://placehold.co/400x400/E52521/FFFFFF?text=Mario+Jump',
-    'https://placehold.co/400x400/009DDC/FFFFFF?text=Mario+Run',
-    'https://placehold.co/400x400/FBD000/000000?text=Mario+Slide',
+    'question-box',
+    'question-box',
+    'question-box',
   ]
 
   const handleImageUpload = (e) => {
@@ -104,6 +104,19 @@ function App() {
 
   const displayImages = images.length > 0 ? images : defaultImages
 
+  // 判斷是否為預設點陣圖
+  const isPixelArt = (img) => {
+    return typeof img === 'string' && (img.startsWith('mario-') || img.startsWith('luigi-') || img.startsWith('question-') || img.startsWith('coin-'))
+  }
+
+  // 渲染圖片或點陣圖
+  const renderImage = (img, className = '') => {
+    if (isPixelArt(img)) {
+      return <div className={`mario-pixel-art ${img} ${className}`} />
+    }
+    return <img src={img} alt="" className={className} />
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-blue to-blue-300 overflow-hidden">
       {/* 音效元素 */}
@@ -187,9 +200,6 @@ function App() {
                     <p className="font-chinese-cute text-lg md:text-xl text-white">
                       上傳 3-5 張照片
                     </p>
-                    <p className="font-chinese-cute text-sm md:text-base text-white mt-2 opacity-90">
-                      或使用預設圖片
-                    </p>
                   </div>
                 </div>
               </label>
@@ -198,21 +208,17 @@ function App() {
         )}
 
         {/* 照片預覽 */}
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto mb-8">
+        <div className="flex justify-center items-center gap-4 max-w-4xl mx-auto mb-8 flex-wrap">
           {displayImages.map((img, index) => (
             <motion.div
               key={index}
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="aspect-square"
+              className="w-32 h-32 md:w-40 md:h-40"
             >
-              <div className="brick-pattern border-4 border-black rounded-lg overflow-hidden h-full">
-                <img
-                  src={img}
-                  alt={`Action ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
+              <div className={`${isPixelArt(img) ? '' : 'brick-pattern'} border-4 border-black rounded-lg overflow-hidden h-full w-full`}>
+                {renderImage(img, "w-full h-full object-cover")}
               </div>
             </motion.div>
           ))}
@@ -238,11 +244,9 @@ function App() {
                     transition={{ duration: 0.3 }}
                     className="mb-4"
                   >
-                    <img
-                      src={displayImages[previewIndex]}
-                      alt={`Action ${previewIndex + 1}`}
-                      className="w-full max-w-md mx-auto rounded-xl border-8 border-mario-blue shadow-2xl"
-                    />
+                    <div className="w-full max-w-md mx-auto rounded-xl border-8 border-mario-blue shadow-2xl overflow-hidden bg-white">
+                      {renderImage(displayImages[previewIndex], "w-full h-full")}
+                    </div>
                   </motion.div>
 
                   <div className="flex justify-between items-center mt-6 px-4">
@@ -282,11 +286,9 @@ function App() {
                   transition={{ duration: 0.1 }}
                   className="w-full max-w-md"
                 >
-                  <img
-                    src={currentSpinImage}
-                    alt="Spinning"
-                    className="w-full h-auto rounded-xl border-4 border-mario-red"
-                  />
+                  <div className="w-full rounded-xl border-4 border-mario-red overflow-hidden bg-white" style={{ aspectRatio: '1/1' }}>
+                    {renderImage(currentSpinImage, "w-full h-full")}
+                  </div>
                 </motion.div>
               )}
 
@@ -297,10 +299,9 @@ function App() {
                   animate={{ scale: 1, y: 0 }}
                   className="text-center"
                 >
-                  <motion.img
-                    src={selectedImage}
-                    alt="Selected"
-                    className="w-full max-w-md mx-auto rounded-xl border-8 border-mario-red shadow-2xl mb-4"
+                  <motion.div
+                    className="w-full max-w-md mx-auto rounded-xl border-8 border-mario-red shadow-2xl mb-4 overflow-hidden bg-white"
+                    style={{ aspectRatio: '1/1' }}
                     animate={{
                       scale: [1, 1.05, 1],
                     }}
@@ -308,7 +309,9 @@ function App() {
                       duration: 0.5,
                       repeat: Infinity
                     }}
-                  />
+                  >
+                    {renderImage(selectedImage, "w-full h-full")}
+                  </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -399,10 +402,35 @@ function App() {
             <li>3. 點擊左右箭頭切換動作照片</li>
             <li>4. 完成預覽後點擊開始遊戲</li>
             <li>5. 系統隨機選出一張照片</li>
-            <li>6. 做出該動作的人淘汰！</li>
+            <li>6. 做出一樣動作的人淘汰！</li>
             <li>7. 重複進行直到選出前三名</li>
           </ol>
         </motion.div>
+
+        {/* 瑪利歐點陣圖風格裝飾 */}
+        <div className="flex justify-center items-center gap-8 md:gap-16 mt-12 mb-8">
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            whileHover={{ y: -10 }}
+            className="pixel-decoration turtle-block"
+          />
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.4, duration: 0.5 }}
+            whileHover={{ y: -10 }}
+            className="pixel-decoration mushroom-block"
+          />
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+            whileHover={{ y: -10 }}
+            className="pixel-decoration star-block"
+          />
+        </div>
       </div>
     </div>
   )
