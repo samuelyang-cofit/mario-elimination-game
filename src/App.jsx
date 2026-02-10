@@ -198,7 +198,7 @@ function App() {
                   <div className="text-center">
                     <Upload className="w-16 h-16 mx-auto mb-4 text-white" />
                     <p className="font-chinese-cute text-lg md:text-xl text-white">
-                      上傳 3-5 張照片
+                      上傳 3 張照片
                     </p>
                   </div>
                 </div>
