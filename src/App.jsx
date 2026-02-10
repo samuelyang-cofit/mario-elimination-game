@@ -24,7 +24,7 @@ function App() {
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files)
     if (files.length < 3 || files.length > 5) {
-      alert('請上傳 3 到 5 張照片！')
+      alert('請上傳 3 照片！')
       return
     }
 
@@ -397,7 +397,7 @@ function App() {
         >
           <h3 className="font-chinese-cute text-2xl mb-6 text-center text-mario-red">遊戲規則</h3>
           <ol className="font-chinese-cute text-base md:text-lg space-y-3 text-gray-700 leading-relaxed">
-            <li>1. 上傳 3-5 張瑪利歐動作照片</li>
+            <li>1. 上傳 3張瑪利歐動作照片</li>
             <li>2. 預覽並向玩家說明每個動作</li>
             <li>3. 點擊左右箭頭切換動作照片</li>
             <li>4. 完成預覽後點擊開始遊戲</li>
