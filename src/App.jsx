@@ -11,6 +11,7 @@ function App() {
   const [isMuted, setIsMuted] = useState(false)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
+  const [countdown, setCountdown] = useState(5)
   const audioRef = useRef(null)
   const resultAudioRef = useRef(null)
 
@@ -60,6 +61,7 @@ function App() {
     setIsSpinning(true)
     setShowResult(false)
     setSelectedImage(null)
+    setCountdown(5)
 
     // 播放音效
     if (!isMuted && audioRef.current) {
@@ -67,8 +69,18 @@ function App() {
       audioRef.current.play().catch(() => {})
     }
 
+    // 倒數計時器
+    let currentCountdown = 5
+    const countdownInterval = setInterval(() => {
+      currentCountdown--
+      setCountdown(currentCountdown)
+      if (currentCountdown <= 0) {
+        clearInterval(countdownInterval)
+      }
+    }, 1000)
+
     let spinCount = 0
-    const maxSpins = 30
+    const maxSpins = 50 // 延長到 5 秒
 
     const spinInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * imagesToUse.length)
@@ -77,6 +89,7 @@ function App() {
 
       if (spinCount >= maxSpins) {
         clearInterval(spinInterval)
+        clearInterval(countdownInterval)
         setTimeout(() => {
           const finalIndex = Math.floor(Math.random() * imagesToUse.length)
           setSelectedImage(imagesToUse[finalIndex])
@@ -148,6 +161,36 @@ function App() {
       </div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
+        {/* 倒數計時器 - 左方 */}
+        <AnimatePresence>
+          {isSpinning && (
+            <motion.div
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+              className="fixed left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20"
+            >
+              <div className="bg-mario-red border-8 border-black rounded-2xl p-6 shadow-2xl">
+                <motion.div
+                  key={countdown}
+                  initial={{ scale: 1.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center"
+                >
+                  <p className="font-pixel text-8xl text-white mb-2"
+                     style={{ textShadow: '4px 4px 0 #000' }}>
+                    {countdown}
+                  </p>
+                  <p className="font-chinese-cute text-xl text-yellow-300">
+                    秒
+                  </p>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* 標題 */}
         <motion.div
           initial={{ y: -100, opacity: 0 }}
