@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, Play, RotateCcw, Volume2, VolumeX, ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -14,6 +14,8 @@ function App() {
   const [countdown, setCountdown] = useState(5)
   const audioRef = useRef(null)
   const resultAudioRef = useRef(null)
+  const bgmRef = useRef(null)
+  const tensionAudioRef = useRef(null)
 
   // 預設的瑪利歐動作圖片（使用點陣圖元素）
   const defaultImages = [
@@ -21,6 +23,34 @@ function App() {
     'question-box',
     'question-box',
   ]
+
+  // 在組件載入時開始播放 BGM
+  useEffect(() => {
+    if (bgmRef.current && !isMuted) {
+      bgmRef.current.volume = 0.5 // 設定音量為 50%
+      bgmRef.current.play().catch(() => {
+        // 自動播放可能被瀏覽器阻擋，等待用戶互動後再播放
+        const playOnInteraction = () => {
+          if (bgmRef.current && !isMuted) {
+            bgmRef.current.play().catch(() => {})
+          }
+          document.removeEventListener('click', playOnInteraction)
+        }
+        document.addEventListener('click', playOnInteraction)
+      })
+    }
+  }, [])
+
+  // 控制 BGM 的靜音狀態
+  useEffect(() => {
+    if (bgmRef.current) {
+      if (isMuted) {
+        bgmRef.current.pause()
+      } else {
+        bgmRef.current.play().catch(() => {})
+      }
+    }
+  }, [isMuted])
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files)
@@ -63,10 +93,16 @@ function App() {
     setSelectedImage(null)
     setCountdown(5)
 
-    // 播放音效
-    if (!isMuted && audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch(() => {})
+    // 暫停 BGM
+    if (!isMuted && bgmRef.current) {
+      bgmRef.current.pause()
+    }
+
+    // 播放緊張音效
+    if (!isMuted && tensionAudioRef.current) {
+      tensionAudioRef.current.currentTime = 0
+      tensionAudioRef.current.volume = 0.6
+      tensionAudioRef.current.play().catch(() => {})
     }
 
     // 倒數計時器
@@ -95,6 +131,17 @@ function App() {
           setSelectedImage(imagesToUse[finalIndex])
           setIsSpinning(false)
           setShowResult(true)
+
+          // 停止緊張音效
+          if (tensionAudioRef.current) {
+            tensionAudioRef.current.pause()
+            tensionAudioRef.current.currentTime = 0
+          }
+
+          // 恢復 BGM 播放
+          if (!isMuted && bgmRef.current) {
+            bgmRef.current.play().catch(() => {})
+          }
 
           // 播放結果音效
           if (!isMuted && resultAudioRef.current) {
@@ -133,6 +180,8 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-blue to-blue-300 overflow-hidden">
       {/* 音效元素 */}
+      <audio ref={bgmRef} src="/Super Mario Bros. medley.mp3" loop />
+      <audio ref={tensionAudioRef} src="https://assets.mixkit.co/active_storage/sfx/2016/2016-preview.mp3" />
       <audio ref={audioRef} src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" />
       <audio ref={resultAudioRef} src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" />
 
