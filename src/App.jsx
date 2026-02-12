@@ -9,6 +9,7 @@ function App() {
   const [showResult, setShowResult] = useState(false)
   const [currentSpinImage, setCurrentSpinImage] = useState(null)
   const [isMuted, setIsMuted] = useState(false)
+  const [volume, setVolume] = useState(0.5)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
   const [countdown, setCountdown] = useState(5)
@@ -51,6 +52,13 @@ function App() {
       }
     }
   }, [isMuted])
+
+  // 控制 BGM 音量
+  useEffect(() => {
+    if (bgmRef.current) {
+      bgmRef.current.volume = volume
+    }
+  }, [volume])
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files)
@@ -260,14 +268,44 @@ function App() {
           </p>
         </motion.div>
 
-        {/* 音效開關 */}
-        <div className="absolute top-4 right-4">
+        {/* 音效控制 */}
+        <div className="absolute top-4 right-4 flex flex-col items-end gap-2 group">
           <button
             onClick={() => setIsMuted(!isMuted)}
             className="bg-mario-yellow p-3 rounded-lg border-4 border-black hover:bg-yellow-400 transition-colors"
           >
             {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
           </button>
+
+          {/* 音量控制面板 - 滑鼠懸停時顯示 */}
+          <div className="opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 -translate-y-2">
+            <div className="bg-white border-4 border-black rounded-lg p-4 shadow-lg">
+              <div className="flex items-center gap-3 mb-2">
+                <Volume2 className="w-4 h-4" />
+                <span className="font-pixel text-sm">
+                  {Math.round(volume * 100)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={(e) => {
+                  const newVolume = parseFloat(e.target.value)
+                  setVolume(newVolume)
+                  if (newVolume > 0 && isMuted) {
+                    setIsMuted(false)
+                  }
+                }}
+                className="w-32 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-mario-red"
+                style={{
+                  background: `linear-gradient(to right, #E52521 0%, #E52521 ${volume * 100}%, #d1d5db ${volume * 100}%, #d1d5db 100%)`
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* 上傳區域 */}
