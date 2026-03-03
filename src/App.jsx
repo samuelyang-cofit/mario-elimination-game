@@ -17,6 +17,30 @@ function App() {
   const resultAudioRef = useRef(null)
   const bgmRef = useRef(null)
   const tensionAudioRef = useRef(null)
+  const audioContextRef = useRef(null)
+
+  const playCountdownBeep = (count) => {
+    if (isMuted) return
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
+      }
+      const ctx = audioContextRef.current
+      const oscillator = ctx.createOscillator()
+      const gainNode = ctx.createGain()
+      oscillator.connect(gainNode)
+      gainNode.connect(ctx.destination)
+      // 最後一聲（1）用高音調，其餘用低音調
+      oscillator.frequency.value = count === 1 ? 880 : 440
+      oscillator.type = 'sine'
+      gainNode.gain.setValueAtTime(volume, ctx.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
+      oscillator.start(ctx.currentTime)
+      oscillator.stop(ctx.currentTime + 0.3)
+    } catch (e) {
+      // ignore audio context errors
+    }
+  }
 
   // 預設的瑪利歐動作圖片（使用點陣圖元素）
   const defaultImages = [
@@ -53,10 +77,13 @@ function App() {
     }
   }, [isMuted])
 
-  // 控制 BGM 音量
+  // 控制 BGM 與倒數音樂音量
   useEffect(() => {
     if (bgmRef.current) {
       bgmRef.current.volume = volume
+    }
+    if (tensionAudioRef.current) {
+      tensionAudioRef.current.volume = volume
     }
   }, [volume])
 
@@ -106,18 +133,23 @@ function App() {
       bgmRef.current.pause()
     }
 
-    // 播放緊張音效
+    // 播放緊張音效（循環到倒數結束）
     if (!isMuted && tensionAudioRef.current) {
       tensionAudioRef.current.currentTime = 0
-      tensionAudioRef.current.volume = 0.6
+      tensionAudioRef.current.volume = volume
+      tensionAudioRef.current.loop = true
       tensionAudioRef.current.play().catch(() => {})
     }
 
-    // 倒數計時器
+    // 倒數計時器，每秒播放一聲 beep
     let currentCountdown = 5
+    playCountdownBeep(currentCountdown) // 立即播放第一聲（5）
     const countdownInterval = setInterval(() => {
       currentCountdown--
       setCountdown(currentCountdown)
+      if (currentCountdown > 0) {
+        playCountdownBeep(currentCountdown)
+      }
       if (currentCountdown <= 0) {
         clearInterval(countdownInterval)
       }
@@ -142,6 +174,7 @@ function App() {
 
           // 停止緊張音效
           if (tensionAudioRef.current) {
+            tensionAudioRef.current.loop = false
             tensionAudioRef.current.pause()
             tensionAudioRef.current.currentTime = 0
           }
